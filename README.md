@@ -1,4 +1,4 @@
-# GreenBack Asset Management Software | Developed by Datasprint, Inc.
+# GreenBack Asset Management Software from Datasprint, Inc.
 
 ```
 $ Portfolio Management & Financial Data Analysis Tool
