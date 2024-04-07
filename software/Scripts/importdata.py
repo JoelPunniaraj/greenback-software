@@ -1,9 +1,11 @@
 import os
 import requests
+import pyfiglet
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
+# from openpyxl.styles import Alignment, NamedStyle
 
 income_workbook_path = r"C:\Users\joelp\greenback\model\model.xlsx"
 income_sheet_name = "income-sheet"
@@ -117,6 +119,9 @@ market_cap_mapping = {
     "Enterprise Value": 6,
 }
 
+# general_style = NamedStyle(name='general_style')
+# general_style.number_format = 'General'
+
 def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
     response = requests.get(url)
     if response.status_code == 200:
@@ -139,7 +144,7 @@ def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
                     cell.value = value
-                    cell.alignment = Alignment(horizontal='right') 
+                    cell.alignment = Alignment(horizontal='right')
         workbook.save(income_workbook_path)
         print("Income Sheet Data from 'stockanalysis.com' Added to Excel File Successfully!")
     else:
@@ -229,10 +234,13 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
     else:
         print("Failed to Fetch Data from the Website!")
 
-print("\nG R E E N B A C K   A S S E T   M A N A G E M E N T , L L C .  |   S O F T W A R E   |")
+ascii_banner1 = pyfiglet.figlet_format("D A T A S P R I N T", font="small")
+ascii_banner2 = pyfiglet.figlet_format("S O F T W A R E", font="small")
+print(ascii_banner1)
+print(ascii_banner2)
+
 ticker = input("\nENTER TICKER: ").lower()
-print()
-print("Accessing 'https://stockanalysis.com/' for Raw Data...")
+print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
 income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
 balance_url = f"https://stockanalysis.com/stocks/{ticker}/financials/balance-sheet/?p=quarterly"
 cash_flow_url = f"https://stockanalysis.com/stocks/{ticker}/financials/cash-flow-statement/?p=quarterly"
