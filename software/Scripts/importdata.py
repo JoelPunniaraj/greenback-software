@@ -1,11 +1,10 @@
 import os
 import requests
-import pyfiglet
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
-# from openpyxl.styles import Alignment, NamedStyle
+from openpyxl.utils import get_column_letter
 
 income_workbook_path = r"C:\Users\joelp\greenback\model\model.xlsx"
 income_sheet_name = "income-sheet"
@@ -119,9 +118,6 @@ market_cap_mapping = {
     "Enterprise Value": 6,
 }
 
-# general_style = NamedStyle(name='general_style')
-# general_style.number_format = 'General'
-
 def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
     response = requests.get(url)
     if response.status_code == 200:
@@ -234,23 +230,49 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
     else:
         print("Failed to Fetch Data from the Website!")
 
-ascii_banner1 = pyfiglet.figlet_format("D A T A S P R I N T", font="small")
-ascii_banner2 = pyfiglet.figlet_format("S O F T W A R E", font="small")
-print(ascii_banner1)
-print(ascii_banner2)
+def convert_text_to_numbers(workbook_path, sheet_name, mapping):
+    workbook = load_workbook(workbook_path)
+    sheet = workbook[sheet_name]
+    for metric, column_number in mapping.items(): # metric 'not defined'
+        for row_num in range(2, sheet.max_row + 1):
+            cell = sheet[get_column_letter(column_number) + str(row_num)]
+            if cell.value and isinstance(cell.value, str) and cell.value.replace('.', '', 1).isdigit():
+                cell.value = float(cell.value)
+    workbook.save(workbook_path)
 
-ticker = input("\nENTER TICKER: ").lower()
-print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
-income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
-balance_url = f"https://stockanalysis.com/stocks/{ticker}/financials/balance-sheet/?p=quarterly"
-cash_flow_url = f"https://stockanalysis.com/stocks/{ticker}/financials/cash-flow-statement/?p=quarterly"
-market_cap_url = f"https://stockanalysis.com/stocks/{ticker}/financials/ratios/?p=quarterly"
+def start_model():
+    ticker = input("\nENTER TICKER: ").lower()
+    print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
+    income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
+    balance_url = f"https://stockanalysis.com/stocks/{ticker}/financials/balance-sheet/?p=quarterly"
+    cash_flow_url = f"https://stockanalysis.com/stocks/{ticker}/financials/cash-flow-statement/?p=quarterly"
+    market_cap_url = f"https://stockanalysis.com/stocks/{ticker}/financials/ratios/?p=quarterly"
+    import_income(income_url, income_mapping, income_workbook_path, income_sheet_name)
+    import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
+    import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
+    import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
+    os.startfile(market_cap_workbook_path)
 
-import_income(income_url, income_mapping, income_workbook_path, income_sheet_name)
-import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
-import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
-import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
-os.startfile(market_cap_workbook_path)
+    convert_text_to_numbers(income_workbook_path, income_sheet_name, income_mapping)
+    convert_text_to_numbers(balance_workbook_path, balance_sheet_name, balance_mapping)
+    convert_text_to_numbers(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
+    convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
+
+def program():
+    dcf = input("\nNEED DCF MODEL? ").lower()
+    if dcf == "no":
+        start_model()
+    else:
+        start_model()
+        dcf_workbook = r"C:\Users\joelp\greenback\model\dcf.xlsx"
+        os.startfile(dcf_workbook)
+
+print("\nG R E E N B A C K   A S S E T   M A N A G E M E N T   S O F T W A R E")
+program()
+
+
+
+
 
 
 
