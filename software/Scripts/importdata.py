@@ -275,17 +275,16 @@ def projections():
     start_model()
 
 def valuations():
-    print("Discounted Cash Flow Model: ")
-    print("\nOptions:")
-    print("Growth")
-    print("Revenue")
-    print("EBITDA")
+    print("\nDiscounted Cash Flow Model Options: ")
+    print("- Growth")
+    print("- Revenue")
+    print("- EBITDA")
     print()
     option = input("Options: ").lower()
     if option == "growth":
         print("\n5Y Model")
         print("10Y Model")
-        choice = input("Year: ").lower()
+        choice = input("\nYear: ").lower()
         if choice == "5y":
             dcf_workbook = r"C:\Users\joelp\greenback\model\dcf.xlsx"
             os.startfile(dcf_workbook)

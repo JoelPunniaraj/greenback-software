@@ -12,10 +12,15 @@ Past 5 Years of Data Imported from (stockanalysis.com)
   - Cash Flow Sheet Statement (Quarterly)
   - Historical Market Capitalization (Quarterly)
 
+Starting the Software:
+
 ```
 $ cd greenback
 $ run app.bat
 ```
+
+Using Projections Feature:
+
 ```
 D A T A S P R I N T ,  I N C .
 
@@ -27,6 +32,31 @@ Options:
 Enter your choice: projections
 
 Ticker: aapl
+```
+
+Using Valuations Feature:
+
+```
+D A T A S P R I N T ,  I N C .
+
+Options:
+- Projections      
+- Valuations       
+- Portfolio        
+
+Enter your choice: valuations
+
+Discounted Cash Flow Model Options: 
+- Growth
+- Revenue
+- EBITDA
+
+Options: growth
+
+5Y Model 
+10Y Model
+
+Year: 5y 
 ```
 
 New Updates Coming in May 2024!
