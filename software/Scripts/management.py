@@ -2,7 +2,6 @@ import sqlite3
 import yfinance as yf
 from prettytable import PrettyTable as pt
 import locale
-import pyfiglet
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -119,12 +118,6 @@ def print_portfolio_table():
     print(f"\nTotal Profit: {formatted_total_value}")
 
 def main_menu():
-
-    ascii_banner1 = pyfiglet.figlet_format("D A T A S P R I N T", font="small")
-    ascii_banner2 = pyfiglet.figlet_format("S O F T W A R E", font="small")
-    print(ascii_banner1)
-    print(ascii_banner2)
-
     while True:
         print("\nOptions:")
         print("- 'Add' - Add Position")

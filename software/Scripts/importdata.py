@@ -1,5 +1,7 @@
 import os
 import requests
+import sqlite3
+import management
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
@@ -142,7 +144,7 @@ def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right')
         workbook.save(income_workbook_path)
-        print("Income Sheet Data from 'stockanalysis.com' Added to Excel File Successfully!")
+        print("Income Sheet Data from 'stockanalysis.com' Added!")
     else:
         print("Failed to Fetch Data from the Website!")
 
@@ -170,7 +172,7 @@ def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_na
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
         workbook.save(balance_workbook_path)
-        print("Balance Sheet Data from 'stockanalysis.com' Added to Excel File Successfully!")
+        print("Balance Sheet Data from 'stockanalysis.com' Added!")
     else:
         print("Failed to Fetch Data from the Website!")
 
@@ -198,7 +200,7 @@ def import_cash_flow(url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
         workbook.save(cash_flow_workbook_path)
-        print("Cash Flow Sheet Data from 'stockanalysis.com' Added to Excel File Successfully!")
+        print("Cash Flow Sheet Data from 'stockanalysis.com' Added!")
     else:
         print("Failed to Fetch Data from the Website!")
 
@@ -226,7 +228,7 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
         workbook.save(market_cap_workbook_path)
-        print("Stock History Sheet Data from 'stockanalysis.com' Added to Excel File Successfully!")
+        print("Stock History Sheet Data from 'stockanalysis.com' Added!")
     else:
         print("Failed to Fetch Data from the Website!")
 
@@ -240,8 +242,20 @@ def convert_text_to_numbers(workbook_path, sheet_name, mapping):
                 cell.value = float(cell.value)
     workbook.save(workbook_path)
 
+'''
+def import_ticker():
+    workbook = load_workbook(workbook_path)
+    workbook_path = "C:\\Users\\joelp\\greenback\\model.xlsx"
+    load = load_workbook(workbook_path)
+    sheet = load["projections"]
+    cell = sheet["AX1"]
+    cell.value = ticker
+    workbook.save(workbook_path)
+    pass
+'''
+
 def start_model():
-    ticker = input("\nENTER TICKER: ").lower()
+    ticker = input("\nTicker: ").lower()
     print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
     income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
     balance_url = f"https://stockanalysis.com/stocks/{ticker}/financials/balance-sheet/?p=quarterly"
@@ -251,25 +265,59 @@ def start_model():
     import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
     import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
     import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
-    os.startfile(market_cap_workbook_path)
-
     convert_text_to_numbers(income_workbook_path, income_sheet_name, income_mapping)
     convert_text_to_numbers(balance_workbook_path, balance_sheet_name, balance_mapping)
     convert_text_to_numbers(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
     convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
+    os.startfile(market_cap_workbook_path)
+
+def projections():
+    start_model()
+
+def valuations():
+    print("Discounted Cash Flow Model: ")
+    print("\nOptions:")
+    print("Growth")
+    print("Revenue")
+    print("EBITDA")
+    print()
+    option = input("Options: ").lower()
+    if option == "growth":
+        print("\n5Y Model")
+        print("10Y Model")
+        choice = input("Year: ").lower()
+        if choice == "5y":
+            dcf_workbook = r"C:\Users\joelp\greenback\model\dcf.xlsx"
+            os.startfile(dcf_workbook)
+            start_model()
+        elif choice == "10y":
+            pass
+    elif option == "revenue":
+        pass
+    elif option == "ebitda":
+        pass
 
 def program():
-    dcf = input("\nNEED DCF MODEL? ").lower()
-    if dcf == "no":
-        start_model()
-    else:
-        start_model()
-        dcf_workbook = r"C:\Users\joelp\greenback\model\dcf.xlsx"
-        os.startfile(dcf_workbook)
 
-print("\nG R E E N B A C K   A S S E T   M A N A G E M E N T   S O F T W A R E")
+    print("\nD A T A S P R I N T ,  I N C .")
+
+    while True:
+        print("\nOptions:")
+        print("- Projections")
+        print("- Valuations")
+        print("- Portfolio")
+        print()
+        choice = input("Enter your choice: ").lower()
+        if choice == 'projections':
+            start_model()
+        elif choice == 'valuations':
+            valuations()
+        elif choice == 'portfolio':
+            management.main_menu()
+        else:
+            print("Invalid Choice! Please Enter a Valid Option.")
+
 program()
-
 
 
 
