@@ -22,8 +22,6 @@ $ run app.bat
 Using Projections Feature (Ex. META):
 
 ```
-(software) C:\Users\joelp\greenback>app.bat
-
 D A T A S P R I N T ,  I N C .
 
 Options:
