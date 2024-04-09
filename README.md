@@ -22,22 +22,22 @@ $ run app.bat
 Using Projections Feature (Ex. META):
 
 ```
-D A T A S P R I N T ,  I N C .
+$ D A T A S P R I N T ,  I N C .
 
-Options:
-- Projections      
-- Valuations       
-- Portfolio        
+$ Options:
+$ - Projections      
+$ - Valuations       
+$ - Portfolio        
 
-Enter your choice: projections
+$ Enter your choice: projections
 
-Ticker: meta
+$ Ticker: meta
 
-Accessing 'https://stockanalysis.com/' for Raw Data...
-Income Sheet Data from 'stockanalysis.com' Added!
-Balance Sheet Data from 'stockanalysis.com' Added!
-Cash Flow Sheet Data from 'stockanalysis.com' Added!
-Stock History Sheet Data from 'stockanalysis.com' Added!
+$ Accessing 'https://stockanalysis.com/' for Raw Data...
+$ Income Sheet Data from 'stockanalysis.com' Added!
+$ Balance Sheet Data from 'stockanalysis.com' Added!
+$ Cash Flow Sheet Data from 'stockanalysis.com' Added!
+$ Stock History Sheet Data from 'stockanalysis.com' Added!
 ```
 
 An Excel Spreadsheet Will Open with the Following Sheets:
