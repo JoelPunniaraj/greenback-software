@@ -300,21 +300,20 @@ def program():
 
     print("\nD A T A S P R I N T ,  I N C .")
 
-    while True:
-        print("\nOptions:")
-        print("- Projections")
-        print("- Valuations")
-        print("- Portfolio")
-        print()
-        choice = input("Enter your choice: ").lower()
-        if choice == 'projections':
-            start_model()
-        elif choice == 'valuations':
-            valuations()
-        elif choice == 'portfolio':
-            management.main_menu()
-        else:
-            print("Invalid Choice! Please Enter a Valid Option.")
+    print("\nOptions:")
+    print("- Projections")
+    print("- Valuations")
+    print("- Portfolio")
+    print()
+    choice = input("Enter your choice: ").lower()
+    if choice == 'projections':
+        start_model()
+    elif choice == 'valuations':
+        valuations()
+    elif choice == 'portfolio':
+        management.main_menu()
+    else:
+        print("Invalid Choice! Please Enter a Valid Option.")
 
 program()
 

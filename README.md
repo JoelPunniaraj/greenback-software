@@ -19,9 +19,11 @@ $ cd greenback
 $ run app.bat
 ```
 
-Using Projections Feature:
+Using Projections Feature (Ex. META):
 
 ```
+(software) C:\Users\joelp\greenback>app.bat
+
 D A T A S P R I N T ,  I N C .
 
 Options:
@@ -31,39 +33,43 @@ Options:
 
 Enter your choice: projections
 
-Ticker: aapl
+Ticker: meta
+
+Accessing 'https://stockanalysis.com/' for Raw Data...
+Income Sheet Data from 'stockanalysis.com' Added!
+Balance Sheet Data from 'stockanalysis.com' Added!
+Cash Flow Sheet Data from 'stockanalysis.com' Added!
+Stock History Sheet Data from 'stockanalysis.com' Added!
 ```
 
-Using Valuations Feature:
+An Excel Spreadsheet Will Open with the Following Sheets:
+- income-sheet
+- balance-sheet
+- cash-flow-sheet
+- stock-history
+- condense-sheet
+- projections
 
-```
-D A T A S P R I N T ,  I N C .
+The 'income-sheet', 'balance-sheet', 'cash-flow-sheet', and 'stock-history'
+has the Past 5 Quarters Imported and Organized Appropriately. 
 
-Options:
-- Projections      
-- Valuations       
-- Portfolio        
+The 'condense-sheet' Selects Necessary Metrics for the 'projections' Sheet and
+Makes Sure the Data is Properly Formatted for Use. 
 
-Enter your choice: valuations
+The 'projections' Sheet Houses all the Calculations and Charts to Show the 
+Projections of the Selected Ticker
 
-Discounted Cash Flow Model Options: 
-- Growth
-- Revenue
-- EBITDA
-
-Options: growth
-
-5Y Model 
-10Y Model
-
-Year: 5y 
-```
+The Portfolio Option Allows You to Add Positions and Track Prices
+- Live Prices from Yahoo Finance
+- View Portfolio Statistics
 
 New Updates Coming in May 2024!
   - Will Be Able to Use Model for IPOs (Less Than 5 Years of Financial Data)
   - Will Be Able to Use Data from FRED.gov for Macroeconomic Analysis 
   - PyTorch Libraries Used to Generate More Accurate Projections
     using Equity Data, Macroeconomic Data, and Financial Documents
+  - Automatic Portfolio Allocation Algorithm to Help Investors
+    Manage and Adjust Positions Each Financial Quarter
 
 Exciting Features in Development Coming Soon!
 
