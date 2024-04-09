@@ -1,18 +1,24 @@
-import sqlite3
+import mysql.connector
 import yfinance as yf
 from prettytable import PrettyTable as pt
 import locale
 
 locale.setlocale(locale.LC_ALL, '')
 
-conn = sqlite3.connect('portfolio.db')
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="datasprint",
+    database="greenback"
+)
+
 c = conn.cursor()
 
 c.execute('''CREATE TABLE IF NOT EXISTS portfolio
-             (ticker TEXT, shares INTEGER, cost_basis REAL)''')
+             (ticker VARCHAR(10), shares INT, cost_basis DECIMAL(10, 2))''')
 
 def add_position(ticker, shares, cost_basis):
-    c.execute("INSERT INTO portfolio VALUES (?, ?, ?)", (ticker, shares, cost_basis))
+    c.execute("INSERT INTO portfolio VALUES (%s, %s, %s)", (ticker, shares, cost_basis))
     conn.commit()
 
 def get_live_price(ticker):
@@ -118,38 +124,42 @@ def print_portfolio_table():
     print(f"\nTotal Profit: {formatted_total_value}")
 
 def main_menu():
-    while True:
-        print("\nOptions:")
-        print("- 'Add' - Add Position")
-        print("- 'View' - View Portfolio")
-        print("- 'Edit' - Edit a Position")
-        print("- 'Remove' - Remove a Position")
-        print("-  Exit")
-        print()
-        choice = input("Enter your choice: ").lower()
-        if choice == 'add':
-            add_position_menu()
-        elif choice == 'view':
-            print_portfolio_table()
-        elif choice == 'edit':
-            edit_position_menu()
-        elif choice == 'remove':
-            remove_position_menu()
-        elif choice == 'exit':
-            break
-        else:
-            print("Invalid choice. Please enter a valid option.")
+    try:
+        while True:
+            print("\nOptions:")
+            print("- 'Add' - Add Position")
+            print("- 'View' - View Portfolio")
+            print("- 'Edit' - Edit a Position")
+            print("- 'Remove' - Remove a Position")
+            print("-  Exit")
+            print()
+            choice = input("Enter your choice: ").lower()
+            if choice == 'add':
+                add_position_menu()
+            elif choice == 'view':
+                print_portfolio_table()
+            elif choice == 'edit':
+                edit_position_menu()
+            elif choice == 'remove':
+                remove_position_menu()
+            elif choice == 'exit':
+                break
+            else:
+                print("Invalid choice. Please enter a valid option.")
+    finally:
+        conn.close()
+
 
 def remove_position_menu():
     ticker = input("Enter the ticker symbol to remove: ").upper()
-    c.execute("SELECT * FROM portfolio WHERE ticker=?", (ticker,))
+    c.execute("SELECT * FROM portfolio WHERE ticker=%s", (ticker,))
     position = c.fetchone()
     if position is None:
         print("Position not found.")
     else:
         confirm = input(f"Do you want to remove {ticker} from the portfolio? (yes/no): ").lower()
         if confirm == 'yes':
-            c.execute("DELETE FROM portfolio WHERE ticker=?", (ticker,))
+            c.execute("DELETE FROM portfolio WHERE ticker=%s", (ticker,))
             conn.commit()
             print(f"Position {ticker} removed successfully.")
         else:
@@ -170,7 +180,7 @@ def add_position_menu():
 
 def edit_position_menu():
     ticker = input("Enter the ticker symbol to edit: ").upper()
-    c.execute("SELECT * FROM portfolio WHERE ticker=?", (ticker,))
+    c.execute("SELECT * FROM portfolio WHERE ticker=%s", (ticker,))
     position = c.fetchone()
     if position is None:
         print("Position not found.")
@@ -178,7 +188,7 @@ def edit_position_menu():
         print("Current position:", position)
         new_shares = int(input("Enter the new number of shares (or leave empty to skip): ") or position[1])
         new_cost_basis = float(input("Enter the new cost basis per share (or leave empty to skip): ") or position[2])
-        c.execute("UPDATE portfolio SET shares=?, cost_basis=? WHERE ticker=?", (new_shares, new_cost_basis, ticker))
+        c.execute("UPDATE portfolio SET shares=%s, cost_basis=%s WHERE ticker=%s", (new_shares, new_cost_basis, ticker))
         conn.commit()
         print("Position updated successfully.")
 
@@ -195,7 +205,7 @@ def get_live_price(ticker):
     except Exception as e:
         print(f"Error getting live price for {ticker}: {e}")
         return None
-
+    
 def is_valid_ticker(ticker):
     try:
         info = yf.Ticker(ticker).info

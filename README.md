@@ -49,7 +49,7 @@ An Excel Spreadsheet Will Open with the Following Sheets:
 - projections
 
 The 'income-sheet', 'balance-sheet', 'cash-flow-sheet', and 'stock-history'
-has the Past 5 Quarters Imported and Organized Appropriately. 
+has the Past 5 Years of Financial Data Imported and Organized Appropriately. 
 
 The 'condense-sheet' Selects Necessary Metrics for the 'projections' Sheet and
 Makes Sure the Data is Properly Formatted for Use. 

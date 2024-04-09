@@ -1,14 +1,27 @@
 import os
 import requests
-import sqlite3
-import management
+import mysql.connector
+import management # Needs Attention
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.utils import get_column_letter
 
-income_workbook_path = r"C:\Users\joelp\greenback\model\model.xlsx"
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="datasprint",
+    database="greenback"
+)
+
+def portfolio():
+    try:
+        management.main_menu()
+    finally:
+        conn.close()
+
+income_workbook_path = r"C:\Users\joelp\greenback\model\access_model.xlsx"
 income_sheet_name = "income-sheet"
 income_mapping = {
     "Revenue": 4,
@@ -47,7 +60,7 @@ income_mapping = {
     "EBIT Margin": 37
 }
 
-balance_workbook_path = r"C:\Users\joelp\greenback\model\model.xlsx"
+balance_workbook_path = r"C:\Users\joelp\greenback\model\access_model.xlsx"
 balance_sheet_name = "balance-sheet"
 balance_mapping = {
     "Cash & Equivalents": 4,
@@ -85,7 +98,7 @@ balance_mapping = {
     "Book Value Per Share": 36
 }
 
-cash_flow_workbook_path = r"C:\Users\joelp\greenback\model\model.xlsx"
+cash_flow_workbook_path = r"C:\Users\joelp\greenback\model\access_model.xlsx"
 cash_flow_sheet_name = "cash-flow-sheet"
 cash_flow_mapping = {
     "Net Income": 4,
@@ -112,13 +125,22 @@ cash_flow_mapping = {
     "Free Cash Flow Per Share": 25
 }
 
-market_cap_workbook_path = r"C:\Users\joelp\greenback\model\model.xlsx"
+market_cap_workbook_path = r"C:\Users\joelp\greenback\model\access_model.xlsx"
 market_cap_sheet_name = "stock-history"
 market_cap_mapping = {
     "Market Capitalization": 4,
     "Market Cap Growth": 5,
     "Enterprise Value": 6,
 }
+
+'''
+def data_window():
+    global quarters 
+    print("\n5 Years - '20' Quarters")
+    print("\n3 Years - '12' Quarters")
+    quarters  = int(input("\nEnter The Number Of Years: "))
+    quarters  = quarters - 1
+'''
 
 def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
     response = requests.get(url)
@@ -166,7 +188,7 @@ def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_na
             metric = cells[0].get_text(strip=True)
             if metric in balance_mapping:
                 row_num = balance_mapping[metric]
-                values = [cell.get_text(strip=True) for cell in cells[1:21]] 
+                values = [cell.get_text(strip=True) for cell in cells[1:21]]  
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
                     cell.value = value
@@ -245,7 +267,7 @@ def convert_text_to_numbers(workbook_path, sheet_name, mapping):
 '''
 def import_ticker():
     workbook = load_workbook(workbook_path)
-    workbook_path = "C:\\Users\\joelp\\greenback\\model.xlsx"
+    workbook_path = "C:\\Users\\joelp\\greenback\\access_model.xlsx"
     load = load_workbook(workbook_path)
     sheet = load["projections"]
     cell = sheet["AX1"]
@@ -271,6 +293,20 @@ def start_model():
     convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
     os.startfile(market_cap_workbook_path)
 
+'''
+def remove_data():
+    pass
+'''
+
+'''
+def projections():
+    choice = input("\nOptions:")
+    if choice == "import":
+        start_model()
+    elif choice == "remove":
+        remove_data()    
+'''
+
 def projections():
     start_model()
 
@@ -282,11 +318,11 @@ def valuations():
     print()
     option = input("Options: ").lower()
     if option == "growth":
-        print("\n5Y Model")
-        print("10Y Model")
+        print("\n- 5Y Model")
+        print("- 10Y Model")
         choice = input("\nYear: ").lower()
         if choice == "5y":
-            dcf_workbook = r"C:\Users\joelp\greenback\model\dcf.xlsx"
+            dcf_workbook = r"C:\Users\joelp\greenback\model\dcf_5y.xlsx"
             os.startfile(dcf_workbook)
             start_model()
         elif choice == "10y":
@@ -297,24 +333,21 @@ def valuations():
         pass
 
 def program():
-
     print("\nD A T A S P R I N T ,  I N C .")
-
     print("\nOptions:")
     print("- Projections")
     print("- Valuations")
     print("- Portfolio")
     print()
-    choice = input("Enter your choice: ").lower()
+    choice = input("Enter Your Choice: ").lower()
     if choice == 'projections':
-        start_model()
+        projections()
     elif choice == 'valuations':
         valuations()
     elif choice == 'portfolio':
-        management.main_menu()
+        portfolio()
     else:
         print("Invalid Choice! Please Enter a Valid Option.")
-
 program()
 
 
