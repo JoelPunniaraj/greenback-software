@@ -1,4 +1,4 @@
-# GreenBack Asset Management Software | Datasprint, Inc.
+# Datasprint, Inc. | GreenBack Asset Management Software
 
 Portfolio Management & Financial Data Analysis Tool Features:
   - Actively Be Able To Track Your Portfolio
