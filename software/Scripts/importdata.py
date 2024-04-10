@@ -142,8 +142,6 @@ market_cap_mapping = {
 '''
 def data_window():
     global quarters 
-    print("\n5 Years - '20' Quarters")
-    print("\n3 Years - '12' Quarters")
     quarters  = int(input("\nEnter The Number Of Years: "))
     quarters  = quarters - 1
 '''
@@ -170,7 +168,7 @@ def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
             metric = cells[0].get_text(strip=True)
             if metric in income_mapping:
                 row_num = income_mapping[metric]
-                values = [cell.get_text(strip=True) for cell in cells[1:21]] 
+                values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
 
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
@@ -208,7 +206,7 @@ def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_na
             metric = cells[0].get_text(strip=True)
             if metric in balance_mapping:
                 row_num = balance_mapping[metric]
-                values = [cell.get_text(strip=True) for cell in cells[1:21]] 
+                values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
 
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
@@ -246,7 +244,7 @@ def import_cash_flow(url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_
             metric = cells[0].get_text(strip=True)
             if metric in cash_flow_mapping:
                 row_num = cash_flow_mapping[metric]
-                values = [cell.get_text(strip=True) for cell in cells[1:21]] 
+                values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
 
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
@@ -285,7 +283,7 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
             metric = cells[0].get_text(strip=True)
             if metric in market_cap_mapping:
                 row_num = market_cap_mapping[metric]
-                values = [cell.get_text(strip=True) for cell in cells[1:21]] 
+                values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
 
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
@@ -318,7 +316,7 @@ def import_ticker():
     workbook = load_workbook(workbook_path)
     workbook_path = "C:\\Users\\joelp\\greenback\\access_model.xlsx"
     load = load_workbook(workbook_path)
-    sheet = load["projections"]
+    sheet = load["5y-projections"]
     cell = sheet["AX1"]
     cell.value = ticker
     workbook.save(workbook_path)
@@ -326,6 +324,7 @@ def import_ticker():
 '''
 
 def start_model():
+    global ticker
     ticker = input("\nTicker: ").lower()
     print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
     income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
@@ -343,11 +342,21 @@ def start_model():
     convert_text_to_numbers(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
     convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
 
+'''
+def two_year_projections():
+    workbook = load_workbook(income_workbook_path)
+    sheet = workbook["2y-projections"]
+    cell = sheet["AY6"]
+    cell.value = ticker
+    workbook.save(income_workbook_path)
+    os.startfile(market_cap_workbook_path)
+'''
+
+def five_year_projections():
     workbook = load_workbook(income_workbook_path)
     sheet = workbook["projections"]
     cell = sheet["AY6"]
     cell.value = ticker
-
     workbook.save(income_workbook_path)
     os.startfile(market_cap_workbook_path)
 
@@ -356,26 +365,30 @@ def remove_data():
     pass
 '''
 
-'''
 def projections():
-    choice = input("\nOptions:")
-    if choice == "import":
+    global quarters 
+    print("\nProjection Option ")
+    print("2y Model")
+    print("5y Model")
+    choice = input("\nEnter Option: ").lower()
+    if choice == "5y":
+        quarters = 21
         start_model()
-    elif choice == "remove":
-        remove_data()    
-'''
-
-def projections():
-    start_model()
+        five_year_projections()
+    '''
+    elif choice == "2y":
+        quarters = 9
+        start_model()
+        two_year_projections()
+    '''
 
 def valuations():
     print("\nDiscounted Cash Flow Model Options: ")
     print("- Growth")
     print("- Revenue")
     print("- EBITDA")
-    print()
 
-    option = input("Enter Option: ").lower()
+    option = input("\nEnter Option: ").lower()
     if option == "growth":
         print("\n- 5Y Model")
         print("- 10Y Model")
