@@ -82,6 +82,51 @@ The Portfolio Option Allows You to Add Positions and Track Prices
 - Live Prices from Yahoo Finance
 - View Portfolio Statistics
 
+```
+$ D A T A S P R I N T ,  I N C .
+
+$ Enter Option:      
+$ - Projections      
+$ - Valuations       
+$ - Portfolio        
+
+$ Enter Your Choice: portfolio
+
+$ Options:
+$ - 'Add' 
+$ - 'View' 
+$ - 'Edit' 
+$ - 'Remove'         
+$ -  Exit
+
+$ Enter your choice: view
+$ Do you want to sort the table first? (yes/no): yes
+$ Sort Options:
+$ - Sort by Value
+$ - Sort by Profit        
+$ - Exit
+
+$ Enter your sort choice: value
+$ +--------+--------+------------+--------------------+---------------+----------------+-------------+----------+
+$ | Ticker | Shares | Cost Basis | Initial Investment | Current Price | Position Value | Profit/Loss | % Change |
+$ +--------+--------+------------+--------------------+---------------+----------------+-------------+----------+
+$ | META   |    175 |    $218.58 |         $38,251.50 |       $522.91 |     $91,509.25 |  $53,257.75 |  139.23% |
+$ +--------+--------+------------+--------------------+---------------+----------------+-------------+----------+
+
+$ Total Value: $91,509.25
+
+$ Total Profit: $53,257.75
+
+Options:
+- 'Add' 
+- 'View' 
+- 'Edit' 
+- 'Remove' 
+-  Exit
+
+Enter your choice:  
+```  
+
 New Updates Coming in May 2024!
   - Will Be Able to Use Model for IPOs (Less Than 5 Years of Financial Data)
   - Will Be Able to Use Data from FRED.gov for Macroeconomic Analysis 

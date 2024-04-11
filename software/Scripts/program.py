@@ -8,6 +8,7 @@ import mysql.connector
 
 import yfinance as yf
 
+from decimal import Decimal
 from prettytable import PrettyTable as pt
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
@@ -119,16 +120,18 @@ def print_portfolio_table():
     else:
         sorted_rows = rows
         
+    from decimal import Decimal
+
     for row in sorted_rows:
         ticker, shares, cost_basis = row
-        if ticker in ['BRKB', 'BRK.B']:
+        if ticker in ['BRKB', 'BRK.B']: 
             continue
         live_price = get_live_price(ticker)
         if live_price is not None:
-            position_value = shares * live_price
-            initial_investment = shares * cost_basis
+            position_value = Decimal(shares) * Decimal(live_price)
+            initial_investment = Decimal(shares) * Decimal(cost_basis)
             profit_loss = position_value - initial_investment
-            percent_change = ((live_price - cost_basis) / cost_basis) * 100 if cost_basis != 0 else 0
+            percent_change = ((Decimal(live_price) - Decimal(cost_basis)) / Decimal(cost_basis)) * 100 if Decimal(cost_basis) != Decimal(0) else Decimal(0)
             formatted_cost_basis = locale.currency(cost_basis, grouping=True)
             formatted_live_price = locale.currency(live_price, grouping=True)
             formatted_position_value = locale.currency(position_value, grouping=True)
@@ -139,12 +142,12 @@ def print_portfolio_table():
             formatted_live_price, formatted_position_value, formatted_profit_loss, 
             formatted_percent_change])
 
-    print(table)
+        print(table)
 
     total_value = calculate_portfolio_value()
     formatted_total_value = locale.currency(total_value, grouping=True)
     print(f"\nTotal Value: {formatted_total_value}")
-    print(f"\nTotal Profit: {formatted_total_value}")
+    print(f"\nTotal Profit: {formatted_total_value}") # Needs Fix to Accomodate All Positions Value
 
 def remove_position_menu():
     ticker = input("Enter the ticker symbol to remove: ").upper()
