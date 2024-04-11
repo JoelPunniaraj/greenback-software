@@ -44,15 +44,6 @@ $ Income Sheet Data from 'stockanalysis.com' Added!
 $ Balance Sheet Data from 'stockanalysis.com' Added!
 $ Cash Flow Sheet Data from 'stockanalysis.com' Added!
 $ Stock History Sheet Data from 'stockanalysis.com' Added!
-
-$ Options:
-$ - 'Add'
-$ - 'View'
-$ - 'Edit'
-$ - 'Remove'
-$ -  Exit
-
-$ Enter your choice: 
 ```
 
 An Excel Spreadsheet Will Open with the Following Sheets:
