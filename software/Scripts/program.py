@@ -34,7 +34,9 @@ c.execute('''CREATE TABLE IF NOT EXISTS portfolio
 
 def portfolio():
     try:
-        main_menu()
+        if __name__ == "__main__":
+            main_menu()
+            conn.close()
     finally:
         conn.close()
 
@@ -635,12 +637,7 @@ def program():
     else:
         print("Invalid Choice! Please Enter a Valid Option.")
 
+
 program()
-
-if __name__ == "__main__":
-    main_menu()
-conn.close()
-
-
 
 

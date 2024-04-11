@@ -24,12 +24,18 @@ Using Projections Feature (Ex. META):
 ```
 $ D A T A S P R I N T ,  I N C .
 
-$ Options:
+$ Enter Option:      
 $ - Projections      
 $ - Valuations       
 $ - Portfolio        
 
-$ Enter your choice: projections
+$ Enter Your Choice: projections
+
+$ Projection Option 
+$ 2y Model
+$ 5y Model
+
+$ Enter Option: 5y  
 
 $ Ticker: meta
 
@@ -38,6 +44,15 @@ $ Income Sheet Data from 'stockanalysis.com' Added!
 $ Balance Sheet Data from 'stockanalysis.com' Added!
 $ Cash Flow Sheet Data from 'stockanalysis.com' Added!
 $ Stock History Sheet Data from 'stockanalysis.com' Added!
+
+$ Options:
+$ - 'Add'
+$ - 'View'
+$ - 'Edit'
+$ - 'Remove'
+$ -  Exit
+
+$ Enter your choice: 
 ```
 
 An Excel Spreadsheet Will Open with the Following Sheets:
@@ -60,6 +75,8 @@ Projections of the Selected Ticker
 The Portfolio Option Allows You to Add Positions and Track Prices
 - Live Prices from Yahoo Finance
 - View Portfolio Statistics
+
+![alt text](targets/meta.PNG)
 
 New Updates Coming in May 2024!
   - Will Be Able to Use Model for IPOs (Less Than 5 Years of Financial Data)
