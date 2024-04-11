@@ -63,6 +63,8 @@ An Excel Spreadsheet Will Open with the Following Sheets:
 - condense-sheet
 - projections
 
+
+
 The 'income-sheet', 'balance-sheet', 'cash-flow-sheet', and 'stock-history'
 has the Past 5 Years of Financial Data Imported and Organized Appropriately. 
 
@@ -72,11 +74,13 @@ Makes Sure the Data is Properly Formatted for Use.
 The 'projections' Sheet Houses all the Calculations and Charts to Show the 
 Projections of the Selected Ticker
 
+Projection Model for $META (Meta Platforms Inc)
+
+![alt text](targets/meta.PNG)
+
 The Portfolio Option Allows You to Add Positions and Track Prices
 - Live Prices from Yahoo Finance
 - View Portfolio Statistics
-
-![alt text](targets/meta.PNG)
 
 New Updates Coming in May 2024!
   - Will Be Able to Use Model for IPOs (Less Than 5 Years of Financial Data)
