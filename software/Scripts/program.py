@@ -1,3 +1,4 @@
+
 # Written By Joel Punniaraj 
 # Last Updated : 4/9/2024
 
@@ -119,8 +120,6 @@ def print_portfolio_table():
         sorted_rows = sorted(rows, key=sort_key, reverse=reverse_sort)
     else:
         sorted_rows = rows
-        
-    from decimal import Decimal
 
     for row in sorted_rows:
         ticker, shares, cost_basis = row
@@ -395,11 +394,14 @@ def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right')
+
         workbook.save(income_workbook_path)
         print("Income Sheet Data from 'stockanalysis.com' Added!")
+        # convert_text_to_numbers(income_workbook_path, income_sheet_name, income_mapping) 
 
     else:
         print("Failed to Fetch Data from the Website!")
+
 
 def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_name):
     response = requests.get(url)
@@ -433,8 +435,10 @@ def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_na
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
+
         workbook.save(balance_workbook_path)
         print("Balance Sheet Data from 'stockanalysis.com' Added!")
+        # convert_text_to_numbers(balance_workbook_path, balance_sheet_name, balance_mapping) 
 
     else:
         print("Failed to Fetch Data from the Website!")
@@ -470,10 +474,11 @@ def import_cash_flow(url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_
                         value = float(value.replace(',', ''))
                     '''
                     cell.value = value
-                    
                     cell.alignment = Alignment(horizontal='right') 
+
         workbook.save(cash_flow_workbook_path)
         print("Cash Flow Sheet Data from 'stockanalysis.com' Added!")
+        # convert_text_to_numbers(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
 
     else:
         print("Failed to Fetch Data from the Website!")
@@ -510,11 +515,14 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
+
         workbook.save(market_cap_workbook_path)
         print("Stock History Sheet Data from 'stockanalysis.com' Added!")
+        # convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
 
     else:
         print("Failed to Fetch Data from the Website!")
+
 
 def convert_text_to_numbers(workbook_path, sheet_name, mapping):
     workbook = load_workbook(workbook_path)
@@ -553,11 +561,16 @@ def start_model():
     import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
     import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
     import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
-
-    convert_text_to_numbers(income_workbook_path, income_sheet_name, income_mapping)
-    convert_text_to_numbers(balance_workbook_path, balance_sheet_name, balance_mapping)
-    convert_text_to_numbers(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
-    convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
+    
+'''
+def model_workbook():
+    workbook = load_workbook(income_workbook_path)
+    sheet = workbook["valuation"]
+    cell = sheet["A1"]
+    cell.value = ticker
+    workbook.save(income_workbook_path)
+    os.startfile(market_cap_workbook_path)
+'''
 
 '''
 def two_year_projections():
@@ -576,7 +589,7 @@ def five_year_projections():
     cell.value = ticker
     workbook.save(income_workbook_path)
     os.startfile(market_cap_workbook_path)
-
+    workbook.close()
 '''
 def remove_data():
     pass
@@ -584,20 +597,23 @@ def remove_data():
 
 def projections():
     global quarters 
+    '''
     print("\nProjection Option ")
     print("2y Model")
     print("5y Model")
     choice = input("\nEnter Option: ").lower()
     if choice == "5y":
-        quarters = 21
-        start_model()
-        five_year_projections()
+    '''
+    quarters = 21
+    start_model()
+    five_year_projections()
     '''
     elif choice == "2y":
         quarters = 9
         start_model()
         two_year_projections()
     '''
+
 
 def valuations():
     print("\nDiscounted Cash Flow Model Options: ")
@@ -622,6 +638,38 @@ def valuations():
     elif option == "ebitda":
         pass
 
+
+def print_data(mapping, workbook_path, sheet_name):
+    metric = input("Enter Metric: ")
+    workbook = load_workbook(workbook_path)
+    sheet = workbook[sheet_name]
+
+    for row_num, row in enumerate(sheet.iter_rows(min_row=4, max_row=37, min_col=1, max_col=1, values_only=True), start=4):
+        if row[0] == metric:
+            for cell in sheet.iter_cols(min_row=row_num, max_row=row_num, min_col=2, max_col=sheet.max_column, values_only=True):
+                values = [str(value) for value in cell if value is not None]
+                print('\n'.join(values))
+            break
+    else:
+        print("Metric not found.")
+    workbook.close()
+
+def data():
+    print("\nSelect Data: ")
+    print("- Balance")
+    print("- Income")
+    print("- Cash Flow")
+
+    category = input("\nEnter Option: ").lower()
+    if category == "balance":
+        print_data(balance_mapping, balance_workbook_path, balance_sheet_name)
+    elif category == "income":
+        print_data(income_mapping, income_workbook_path, income_sheet_name)
+    elif category == "cash flow":
+        print_data(cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
+    else:
+        print("Invalid category.")
+
 def program():
     print("\nD A T A S P R I N T ,  I N C .")
     print("\nEnter Option:")
@@ -632,14 +680,14 @@ def program():
 
     choice = input("Enter Your Choice: ").lower()
     if choice == 'projections':
+        # model_workbook()
         projections()
     elif choice == 'valuations':
         valuations()
     elif choice == 'portfolio':
-        portfolio()
+        portfolio()        
     else:
         print("Invalid Choice! Please Enter a Valid Option.")
-
 
 program()
 

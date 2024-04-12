@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./software/Scripts"
+        "./software/Scripts",
+        "./ml/model_",
+        "./ml/model_"
     ]
 }
