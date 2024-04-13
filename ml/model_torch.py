@@ -1,36 +1,39 @@
 import pandas as pd
-import torch
-import plotly.graph_objs as plot
+import plotly as pl
+import torch as tr
 
 file_path = 'C:/Users/joelp/greenback/model/access_model.xlsx'
 sheet_name = 'condense-sheets'
+
 data = pd.read_excel(file_path, sheet_name=sheet_name)
+data = data.transpose()
 
-features = data[['Year', 'Quarter']].values
-target = data['Net Income'].values 
+column_names = data.iloc[0]
+available_metrics = [metric for metric in column_names[1:] if pd.notnull(metric)]
 
-features_tensor = torch.tensor(features, dtype=torch.float32)
-target_tensor = torch.tensor(target, dtype=torch.float32)
+print("\nAvailable Metrics: \n")
+for metric in available_metrics:
+    if metric != "Reported Quarter":
+        print(metric)
 
-input_size = features_tensor.shape[1]
-output_size = 1
-model = torch.nn.Linear(input_size, output_size)
+def select_metric():
+    while True:
+        selected_metric = input("\nEnter Metric: ")
+        if selected_metric.lower() == 'exit' or 'quit':
+            break
+        
+        if selected_metric in available_metrics:
+            column_index = column_names.tolist().index(selected_metric)
+            metric_data = data.iloc[1:, column_index].values.reshape(-1, 1)
+            print(metric_data)
+        else:
+            print("Invalid! Try Again")
 
-critera = torch.nn.MSELoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+select_metric()
 
-num_epochs = 100
-for epoch in range(num_epochs):
-    outputs = model(features_tensor)
-    loss = critera(outputs, target_tensor.view(-1, 1))
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
 
-predictions = model(features_tensor).detach().numpy()
 
-figure = plot.Figure()
-figure.add_trace(plot.Scatter(x=features[:, 0], y=target, mode='markers', name='Actual'))
-figure.add_trace(plot.Scatter(x=features[:, 0], y=predictions.flatten(), mode='lines', name='Predicted'))
-figure.update_layout(title='Projection Chart', xaxis_title='Year', yaxis_title='Net Income')
-figure.show()
+
+
+
+
