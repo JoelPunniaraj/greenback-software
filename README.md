@@ -69,6 +69,76 @@ Projection Model for $META (Meta Platforms Inc)
 
 ![alt text](targets/meta.PNG)
 
+You Can Also Extract Data For Each Metric From 'condense-sheets' . 'regression.py' 
+Calculates the Projected Value for the Next Quarter
+
+```
+$ Available Metrics: 
+$
+$ Revenue
+$ Cost of Revenue
+$ Gross Profit
+$ Operating Expenses
+$ Operating Income
+$ Income Tax
+$ Net Income
+$ Shares Outstanding (Basic) 
+$ Shares Change
+$ EPS (Basic)
+$ Free Cash Flow
+$ Free Cash Flow Per Share   
+$ Dividend Per Share
+$ Gross Margin
+$ Operating Margin
+$ Profit Margin
+$ Free Cash Flow Margin      
+$ Effective Tax Rate
+$ EBITDA
+$ EBITDA Margin
+$ Cash & Equivalents
+$ Total Current Assets       
+$ Total Long-Term Assets     
+$ Total Assets
+$ Deferred Revenue
+$ Total Current Liabilities  
+$ Total Long-Term Liabilities
+$ Total Liabilities
+$ Total Debt
+$ Retained Earnings
+$ Shareholders' Equity       
+$ Net Cash / Debt
+$ Net Cash Per Share
+$ Working Capital
+$ Book Value Per Share       
+$
+$ Enter Metric: Free Cash Flow
+$ 
+$ [11812]
+$ [13906]
+$ [11175]
+$ [7175] 
+$ [5523] 
+$ [337]  
+$ [4668] 
+$ [8761] 
+$ [12735]
+$ [9776] 
+$ [8635] 
+$ [7970] 
+$ [9427] 
+$ [6140] 
+$ [622]
+$ [7443]
+$ [4983]
+$ [5775]
+$ [4983]
+$ [5471]
+$ 
+$ Projected Value: [10206]
+$ 
+$ Enter Metric:
+```
+
 The Portfolio Option Allows You to Add Positions and Track Prices
 - Live Prices from Yahoo Finance
 - View Portfolio Statistics
