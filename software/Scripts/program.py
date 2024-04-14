@@ -8,10 +8,10 @@ import requests
 import mysql.connector
 
 import yfinance as yf
-
 from decimal import Decimal
 from prettytable import PrettyTable as pt
 from bs4 import BeautifulSoup
+
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
@@ -19,6 +19,7 @@ from openpyxl.utils import get_column_letter
 
 # from openpyxl.utils.dataframe import dataframe_to_rows
 # from openpyxl.worksheet.datavalidation import DataValidation
+# from ml import regression
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -74,9 +75,7 @@ def calculate_portfolio_value():
     return total_value
 
 def print_portfolio_table():
-
     sort_table = input("Do you want to sort the table first? (yes/no): ").lower()
-
     if sort_table == 'yes':
         while True:
             print("Sort Options:")
@@ -84,8 +83,7 @@ def print_portfolio_table():
             print("- Sort by Profit")
             print("- Exit")
             print()
-            sort_choice = input("Enter your sort choice: ").lower()
-            
+            sort_choice = input("Enter your sort choice: ").lower()      
             if sort_choice == 'value':
                 sort_key = lambda row: (row[1] * get_live_price(row[0])) if get_live_price(row[0]) is not None else 0
                 reverse_sort = True
@@ -146,7 +144,7 @@ def print_portfolio_table():
     total_value = calculate_portfolio_value()
     formatted_total_value = locale.currency(total_value, grouping=True)
     print(f"\nTotal Value: {formatted_total_value}")
-    print(f"\nTotal Profit: {formatted_total_value}") # Needs Fix to Accomodate All Positions Value
+    # print(f"\nTotal Profit: {formatted_total_value}") # Needs Fix to Accomodate All Positions Value
 
 def remove_position_menu():
     ticker = input("Enter the ticker symbol to remove: ").upper()
@@ -220,11 +218,11 @@ def main_menu():
     try:
         while True:
             print("\nOptions:")
-            print("- 'Add' ")
-            print("- 'View' ")
-            print("- 'Edit' ")
-            print("- 'Remove' ")
-            print("-  Exit" )
+            print("- Add ")
+            print("- View ")
+            print("- Edit ")
+            print("- Remove ")
+            print("- Exit" )
             print()
             choice = input("Enter your choice: ").lower()
             if choice == 'add':
@@ -364,28 +362,23 @@ def data_window():
 
 def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
     response = requests.get(url)
-
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("tbody")
         rows = table.find_all("tr")  
-
         if not os.path.exists(income_workbook_path):
             workbook = Workbook()
         else:
             workbook = load_workbook(income_workbook_path)
-
         if income_sheet_name not in workbook.sheetnames:
             workbook.create_sheet(income_sheet_name)
         sheet = workbook[income_sheet_name]
-
         for row in rows:
             cells = row.find_all("td")
             metric = cells[0].get_text(strip=True)
             if metric in income_mapping:
                 row_num = income_mapping[metric]
                 values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
-
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
                     '''
@@ -394,39 +387,32 @@ def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right')
-
         workbook.save(income_workbook_path)
         print("Income Sheet Data from 'stockanalysis.com' Added!")
         # convert_text_to_numbers(income_workbook_path, income_sheet_name, income_mapping) 
-
     else:
         print("Failed to Fetch Data from the Website!")
 
 
 def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_name):
     response = requests.get(url)
-
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("tbody")
         rows = table.find_all("tr")   
-
         if not os.path.exists(balance_workbook_path):
             workbook = Workbook()
         else:
             workbook = load_workbook(balance_workbook_path)
-
         if balance_sheet_name not in workbook.sheetnames:
             workbook.create_sheet(balance_sheet_name)
         sheet = workbook[balance_sheet_name]
-
         for row in rows:
             cells = row.find_all("td")
             metric = cells[0].get_text(strip=True)
             if metric in balance_mapping:
                 row_num = balance_mapping[metric]
                 values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
-
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
                     '''
@@ -435,38 +421,31 @@ def import_balance(url, balance_mapping, balance_workbook_path, balance_sheet_na
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
-
         workbook.save(balance_workbook_path)
         print("Balance Sheet Data from 'stockanalysis.com' Added!")
         # convert_text_to_numbers(balance_workbook_path, balance_sheet_name, balance_mapping) 
-
     else:
         print("Failed to Fetch Data from the Website!")
 
 def import_cash_flow(url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name):
     response = requests.get(url)
-
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("tbody")
         rows = table.find_all("tr")   
-
         if not os.path.exists(cash_flow_workbook_path):
             workbook = Workbook()
         else:
             workbook = load_workbook(cash_flow_workbook_path)
-
         if cash_flow_sheet_name not in workbook.sheetnames:
             workbook.create_sheet(cash_flow_sheet_name)
         sheet = workbook[cash_flow_sheet_name]
-
         for row in rows:
             cells = row.find_all("td")
             metric = cells[0].get_text(strip=True)
             if metric in cash_flow_mapping:
                 row_num = cash_flow_mapping[metric]
                 values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
-
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
                     '''
@@ -475,38 +454,31 @@ def import_cash_flow(url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
-
         workbook.save(cash_flow_workbook_path)
         print("Cash Flow Sheet Data from 'stockanalysis.com' Added!")
         # convert_text_to_numbers(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
-
     else:
         print("Failed to Fetch Data from the Website!")
 
 def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name):
     response = requests.get(url)
-
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("tbody")
         rows = table.find_all("tr")   
-
         if not os.path.exists(market_cap_workbook_path):
             workbook = Workbook()
         else:
             workbook = load_workbook(market_cap_workbook_path)
-
         if market_cap_sheet_name not in workbook.sheetnames:
             workbook.create_sheet(market_cap_sheet_name)
         sheet = workbook[market_cap_sheet_name]
-
         for row in rows:
             cells = row.find_all("td")
             metric = cells[0].get_text(strip=True)
             if metric in market_cap_mapping:
                 row_num = market_cap_mapping[metric]
                 values = [cell.get_text(strip=True) for cell in cells[1:quarters]] 
-
                 for i, value in enumerate(values):
                     cell = sheet.cell(row=row_num, column=i+2)
                     '''
@@ -515,11 +487,9 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
                     '''
                     cell.value = value
                     cell.alignment = Alignment(horizontal='right') 
-
         workbook.save(market_cap_workbook_path)
         print("Stock History Sheet Data from 'stockanalysis.com' Added!")
         # convert_text_to_numbers(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
-
     else:
         print("Failed to Fetch Data from the Website!")
 
@@ -527,9 +497,7 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
 def convert_text_to_numbers(workbook_path, sheet_name, mapping):
     workbook = load_workbook(workbook_path)
     sheet = workbook[sheet_name]
-
     for metric, column_number in mapping.items(): # metric 'not defined'
-
         for row_num in range(2, sheet.max_row + 1):
             cell = sheet[get_column_letter(column_number) + str(row_num)]
             if cell.value and isinstance(cell.value, str) and cell.value.replace('.', '', 1).isdigit():
@@ -551,17 +519,18 @@ def import_ticker():
 def start_model():
     global ticker
     ticker = input("\nTicker: ").lower()
-    print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
-    income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
-    balance_url = f"https://stockanalysis.com/stocks/{ticker}/financials/balance-sheet/?p=quarterly"
-    cash_flow_url = f"https://stockanalysis.com/stocks/{ticker}/financials/cash-flow-statement/?p=quarterly"
-    market_cap_url = f"https://stockanalysis.com/stocks/{ticker}/financials/ratios/?p=quarterly"
+    access = input("\nAccess Data? ")
+    if access == "yes":
+        print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
+        income_url = f"https://stockanalysis.com/stocks/{ticker}/financials/?p=quarterly"
+        balance_url = f"https://stockanalysis.com/stocks/{ticker}/financials/balance-sheet/?p=quarterly"
+        cash_flow_url = f"https://stockanalysis.com/stocks/{ticker}/financials/cash-flow-statement/?p=quarterly"
+        market_cap_url = f"https://stockanalysis.com/stocks/{ticker}/financials/ratios/?p=quarterly"
+        import_income(income_url, income_mapping, income_workbook_path, income_sheet_name)
+        import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
+        import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
+        import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
 
-    import_income(income_url, income_mapping, income_workbook_path, income_sheet_name)
-    import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
-    import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
-    import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
-    
 '''
 def model_workbook():
     workbook = load_workbook(income_workbook_path)
@@ -582,14 +551,19 @@ def two_year_projections():
     os.startfile(market_cap_workbook_path)
 '''
 
-def five_year_projections():
-    workbook = load_workbook(income_workbook_path)
-    sheet = workbook["projections"]
-    cell = sheet["AY6"]
-    cell.value = ticker
-    workbook.save(income_workbook_path)
-    os.startfile(market_cap_workbook_path)
-    workbook.close()
+def evaluate_projections():
+    load = input("\nLoad Model? ")
+    if load == "yes":
+        workbook = load_workbook(income_workbook_path)
+        sheet = workbook["projections"]
+        cell = sheet["AY6"]
+        cell.value = ticker
+        workbook.save(income_workbook_path)
+        os.startfile(market_cap_workbook_path)
+        workbook.close()
+    else:
+        view_data()
+
 '''
 def remove_data():
     pass
@@ -599,34 +573,30 @@ def projections():
     global quarters 
     '''
     print("\nProjection Option ")
-    print("2y Model")
+    print("3y Model")
     print("5y Model")
     choice = input("\nEnter Option: ").lower()
     if choice == "5y":
     '''
     quarters = 21
     start_model()
-    five_year_projections()
+    evaluate_projections()
     '''
-    elif choice == "2y":
-        quarters = 9
+    elif choice == "3y":
+        quarters = 9+
         start_model()
         two_year_projections()
     '''
-
-
 def valuations():
     print("\nDiscounted Cash Flow Model Options: ")
     print("- Growth")
     print("- Revenue")
     print("- EBITDA")
-
     option = input("\nEnter Option: ").lower()
     if option == "growth":
         print("\n- 5Y Model")
         print("- 10Y Model")
-        choice = input("\nYear: ").lower()
-        
+        choice = input("\nYear: ").lower()      
         if choice == "5y":
             dcf_workbook = r"C:\Users\joelp\greenback\model\dcf_5y.xlsx"
             os.startfile(dcf_workbook)
@@ -638,28 +608,27 @@ def valuations():
     elif option == "ebitda":
         pass
 
-
 def print_data(mapping, workbook_path, sheet_name):
     metric = input("Enter Metric: ")
     workbook = load_workbook(workbook_path)
     sheet = workbook[sheet_name]
-
+    found_metric = False
     for row_num, row in enumerate(sheet.iter_rows(min_row=4, max_row=37, min_col=1, max_col=1, values_only=True), start=4):
         if row[0] == metric:
+            found_metric = True
             for cell in sheet.iter_cols(min_row=row_num, max_row=row_num, min_col=2, max_col=sheet.max_column, values_only=True):
-                values = [str(value) for value in cell if value is not None]
+                values = [str(value) for value in cell if value is not None and value != "" and not value.startswith("=")]
                 print('\n'.join(values))
             break
-    else:
+    if not found_metric:
         print("Metric not found.")
     workbook.close()
 
-def data():
+def view_data():
     print("\nSelect Data: ")
     print("- Balance")
     print("- Income")
     print("- Cash Flow")
-
     category = input("\nEnter Option: ").lower()
     if category == "balance":
         print_data(balance_mapping, balance_workbook_path, balance_sheet_name)
@@ -668,7 +637,7 @@ def data():
     elif category == "cash flow":
         print_data(cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
     else:
-        print("Invalid category.")
+        print("Invalid Category.")
 
 def program():
     print("\nD A T A S P R I N T ,  I N C .")
@@ -677,7 +646,6 @@ def program():
     print("- Valuations")
     print("- Portfolio")
     print()
-
     choice = input("Enter Your Choice: ").lower()
     if choice == 'projections':
         # model_workbook()
@@ -691,4 +659,10 @@ def program():
 
 program()
 
-
+'''
+regression_model = input("Open Regression Model? ")
+if regression_model == "yes":
+    regression()
+else:
+    pass
+'''
