@@ -173,19 +173,19 @@ $ | Ticker | Shares | Cost Basis | Initial Investment | Current Price | Position
 $ +--------+--------+------------+--------------------+---------------+----------------+-------------+----------+
 $ | META   |    175 |    $218.58 |         $38,251.50 |       $522.91 |     $91,509.25 |  $53,257.75 |  139.23% |
 $ +--------+--------+------------+--------------------+---------------+----------------+-------------+----------+
-
+$
 $ Total Value: $91,509.25
-
+$
 $ Total Profit: $53,257.75
-
-Options:
-- 'Add' 
-- 'View' 
-- 'Edit' 
-- 'Remove' 
--  Exit
-
-Enter your choice:  
+$
+$ Options:
+$ - Add 
+$ - View 
+$ - Edit 
+$ - Remove 
+$ - Exit
+$
+$ Enter your choice:  
 ```  
 
 New Updates Coming in May 2024!
