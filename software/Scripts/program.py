@@ -3,9 +3,12 @@
 # Last Updated : 4/14/2024
 
 import os
+import time
 import locale
 import requests
 import mysql.connector
+
+from threading import Thread
 
 import yfinance as yf
 from decimal import Decimal
@@ -17,21 +20,19 @@ from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.utils import get_column_letter
 
+# from openpyxl.formula import Tokenizer
+# from openpyxl.utils import FORMULAE
 # from openpyxl.utils.dataframe import dataframe_to_rows
 # from openpyxl.worksheet.datavalidation import DataValidation
-# from ml import regression
 
 locale.setlocale(locale.LC_ALL, '')
-
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
     password="datasprint",
     database="greenback"
 )
-
 c = conn.cursor()
-
 c.execute('''CREATE TABLE IF NOT EXISTS portfolio
              (ticker VARCHAR(10), shares INT, cost_basis DECIMAL(10, 2))''')
 
@@ -240,7 +241,6 @@ def main_menu():
     finally:
         conn.close()
 
-
 income_workbook_path = r"C:\Users\joelp\greenback\model\access_model.xlsx"
 income_sheet_name = "income-sheet"
 income_mapping = {
@@ -352,13 +352,6 @@ market_cap_mapping = {
     "Market Cap Growth": 5,
     "Enterprise Value": 6,
 }
-
-'''
-def data_window():
-    global quarters 
-    quarters  = int(input("\nEnter The Number Of Years: "))
-    quarters  = quarters - 1
-'''
 
 def import_income(url, income_mapping, income_workbook_path, income_sheet_name):
     response = requests.get(url)
@@ -493,7 +486,6 @@ def import_marketcap(url, market_cap_mapping, market_cap_workbook_path, market_c
     else:
         print("Failed to Fetch Data from the Website!")
 
-
 def convert_text_to_numbers(workbook_path, sheet_name, mapping):
     workbook = load_workbook(workbook_path)
     sheet = workbook[sheet_name]
@@ -504,21 +496,15 @@ def convert_text_to_numbers(workbook_path, sheet_name, mapping):
                 cell.value = float(cell.value)
     workbook.save(workbook_path)
 
-'''
-def import_ticker():
-    workbook = load_workbook(workbook_path)
-    workbook_path = "C:\\Users\\joelp\\greenback\\access_model.xlsx"
-    load = load_workbook(workbook_path)
-    sheet = load["5y-projections"]
-    cell = sheet["AX1"]
-    cell.value = ticker
-    workbook.save(workbook_path)
-    pass
-'''
-
 def start_model():
     global ticker
     ticker = input("\nTicker: ").lower()
+    try:
+        stock = yf.Ticker(ticker)
+        live_price = round(stock.history(period="1d").iloc[-1]['Close'], 2)
+        print(f"Price: ${live_price}")
+    except Exception as e:
+        print(f"Error Fetching {ticker}: {e}")    
     access = input("\nAccess Data? ")
     if access == "yes":
         print("\nAccessing 'https://stockanalysis.com/' for Raw Data...")
@@ -530,26 +516,8 @@ def start_model():
         import_balance(balance_url, balance_mapping, balance_workbook_path, balance_sheet_name)
         import_cash_flow(cash_flow_url, cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
         import_marketcap(market_cap_url, market_cap_mapping, market_cap_workbook_path, market_cap_sheet_name)
-
-'''
-def model_workbook():
-    workbook = load_workbook(income_workbook_path)
-    sheet = workbook["valuation"]
-    cell = sheet["A1"]
-    cell.value = ticker
-    workbook.save(income_workbook_path)
-    os.startfile(market_cap_workbook_path)
-'''
-
-'''
-def two_year_projections():
-    workbook = load_workbook(income_workbook_path)
-    sheet = workbook["2y-projections"]
-    cell = sheet["AY6"]
-    cell.value = ticker
-    workbook.save(income_workbook_path)
-    os.startfile(market_cap_workbook_path)
-'''
+    else:
+        pass
 
 def evaluate_projections():
     load = input("\nLoad Model? ")
@@ -562,31 +530,14 @@ def evaluate_projections():
         os.startfile(market_cap_workbook_path)
         workbook.close()
     else:
-        view_data()
-
-'''
-def remove_data():
-    pass
-'''
+        exit()
 
 def projections():
     global quarters 
-    '''
-    print("\nProjection Option ")
-    print("3y Model")
-    print("5y Model")
-    choice = input("\nEnter Option: ").lower()
-    if choice == "5y":
-    '''
     quarters = 21
     start_model()
     evaluate_projections()
-    '''
-    elif choice == "3y":
-        quarters = 9+
-        start_model()
-        two_year_projections()
-    '''
+
 def valuations():
     print("\nDiscounted Cash Flow Model Options: ")
     print("- Growth")
@@ -608,7 +559,7 @@ def valuations():
     elif option == "ebitda":
         pass
 
-def print_data(mapping, workbook_path, sheet_name):
+def print_data(mapping, workbook_path, sheet_name): # mapping 'not defined'
     metric = input("Enter Metric: ")
     workbook = load_workbook(workbook_path)
     sheet = workbook[sheet_name]
@@ -624,45 +575,60 @@ def print_data(mapping, workbook_path, sheet_name):
         print("Metric not found.")
     workbook.close()
 
-def view_data():
-    print("\nSelect Data: ")
-    print("- Balance")
-    print("- Income")
-    print("- Cash Flow")
-    category = input("\nEnter Option: ").lower()
-    if category == "balance":
-        print_data(balance_mapping, balance_workbook_path, balance_sheet_name)
-    elif category == "income":
-        print_data(income_mapping, income_workbook_path, income_sheet_name)
-    elif category == "cash flow":
-        print_data(cash_flow_mapping, cash_flow_workbook_path, cash_flow_sheet_name)
-    else:
-        print("Invalid Category.")
+def remove_data(workbook_path, sheet_name, mapping):
+    try:
+        workbook = load_workbook(workbook_path)
+        sheet = workbook[sheet_name]
+        for metric, column_number in mapping.items():
+            for row_num in range(4, sheet.max_row + 1):
+                cell = sheet.cell(row=row_num, column=column_number)
+                cell.value = None 
+
+        workbook.save(workbook_path)
+        print("Data Removed Successfully.")
+    except Exception as e:
+        print(f"Error removing data: {e}")
+    finally:
+        workbook.close()
+
+
 
 def program():
-    print("\nD A T A S P R I N T ,  I N C .")
-    print("\nEnter Option:")
-    print("- Projections")
-    print("- Valuations")
-    print("- Portfolio")
-    print()
-    choice = input("Enter Your Choice: ").lower()
-    if choice == 'projections':
-        # model_workbook()
-        projections()
-    elif choice == 'valuations':
-        valuations()
-    elif choice == 'portfolio':
-        portfolio()        
-    else:
-        print("Invalid Choice! Please Enter a Valid Option.")
+    while True:
+        print("\nEnter Options:")
+        print("- Projections")
+        print("- Valuations")
+        print("- Fair Value")
+        print("- Portfolio")
+        print("- Exit")
+        print()
+        choice = input("Choice: ").lower()
+        if choice == 'projections':
+            # model_workbook()
+            data = input("Workbook Clear? ")
+            if data == 'no':
+                print("Clearing Imported Data...")
+                remove_data(income_workbook_path, income_sheet_name, income_mapping)
+                remove_data(balance_workbook_path, balance_sheet_name, balance_mapping)
+                remove_data(cash_flow_workbook_path, cash_flow_sheet_name, cash_flow_mapping)
+                remove_data(market_cap_workbook_path, market_cap_sheet_name, market_cap_mapping)
+                break
+            else:
+                projections()
+            break
+        elif choice == 'valuations':
+            valuations()
+        elif choice == "fair value":
+            # fair_value()
+            pass
+        elif choice == 'portfolio':
+            portfolio()     
+        elif choice == 'exit':
+            break   
+        else:
+            print("Invalid Choice! Please Enter a Valid Option.")
 
 program()
 
-'''
-regression_model = input("Open Regression Model? ")
-if regression_model == "yes":
-    regression()
-else:
-    pass
-'''
+from regression import view_regression
+view_regression()
