@@ -65,10 +65,6 @@ Makes Sure the Data is Properly Formatted for Use.
 The 'projections' Sheet Houses all the Calculations and Charts to Show the 
 Projections of the Selected Ticker
 
-Projection Model for $META (Meta Platforms Inc)
-
-![alt text](targets/meta.PNG)
-
 You Can Also Extract Data For Each Metric From 'condense-sheets' . 'regression.py' 
 Calculates the Projected Value for the Next Quarter
 
